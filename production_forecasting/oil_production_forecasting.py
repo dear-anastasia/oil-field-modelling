@@ -14,7 +14,7 @@ from toolbox.forecasting_utils import calculate_validation_metric, get_comp_chai
 
 forecast_window_shift_num = 4
 
-depth = 100
+depth = 50
 
 
 def project_root() -> Path:
@@ -24,7 +24,7 @@ def project_root() -> Path:
 
 def run_oil_forecasting(train_file_path,
                         train_file_path_crm,
-                        forecast_length=25, max_window_size=50,
+                        forecast_length=10, max_window_size=20,
                         is_visualise=False,
                         well_id='Unknown',
                         max_time=datetime.timedelta(minutes=10)):
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
         run_oil_forecasting(full_path_train,
                             full_path_train_crm,
-                            forecast_length=25,
-                            max_window_size=50,
+                            forecast_length=10,
+                            max_window_size=20,
                             is_visualise=True,
                             well_id=well)

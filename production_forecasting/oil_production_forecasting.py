@@ -83,8 +83,8 @@ def run_oil_forecasting(train_file_path,
 
         chain_simple = TsForecastingChain(PrimaryNode('rfr'))
         chain_simple_crm = TsForecastingChain(PrimaryNode('rfr'))
-        chain_crm_opt = get_comp_chain(f'{well_id}_{forecasting_step}', dataset_to_train_local_crm,
-                                       max_time)
+        chain_crm_opt = TsForecastingChain(PrimaryNode('rfr'))#get_comp_chain(f'{well_id}_{forecasting_step}', dataset_to_train_local_crm,
+                        #               max_time)
 
         chain_simple.fit_from_scratch(input_data=dataset_to_train_local, verbose=False)
         chain_simple_crm.fit_from_scratch(input_data=dataset_to_train_local_crm, verbose=False)

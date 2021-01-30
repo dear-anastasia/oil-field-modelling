@@ -78,13 +78,12 @@ def run_oil_forecasting(train_file_path,
         start = depth * (forecasting_step + 1)
         end = depth * (forecasting_step + 2)
 
-        dataset_to_validate_local = dataset_to_validate.subset(start + depth, end + depth)
-        dataset_to_validate_local_crm = dataset_to_validate_crm.subset(start + depth, end + depth)
+        dataset_to_validate_local = dataset_to_validate.subset(start, end)
+        dataset_to_validate_local_crm = dataset_to_validate_crm.subset(start, end)
 
         chain_simple = TsForecastingChain(PrimaryNode('rfr'))
         chain_simple_crm = TsForecastingChain(PrimaryNode('rfr'))
-        chain_crm_opt = get_comp_chain(f'{well_id}_{forecasting_step}', dataset_to_train_local_crm,
-                                       max_time)
+        chain_crm_opt = TsForecastingChain(PrimaryNode('rfr'))
 
         chain_simple.fit_from_scratch(input_data=dataset_to_train_local, verbose=False)
         chain_simple_crm.fit_from_scratch(input_data=dataset_to_train_local_crm, verbose=False)

@@ -1,11 +1,9 @@
 import datetime
-import os
-from copy import copy
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
+from copy import copy
 from dtw import dtw
 from fedot.core.chains.chain import Chain
 from fedot.core.chains.node import PrimaryNode, SecondaryNode
@@ -18,6 +16,7 @@ from fedot.core.data.preprocessing import EmptyStrategy
 from fedot.core.repository.quality_metrics_repository import MetricsRepository, \
     RegressionMetricsEnum
 from fedot.utilities.synthetic.chain_template_new import ChainTemplate
+from pathlib import Path
 from sklearn.metrics import mean_squared_error as mse
 
 
@@ -74,12 +73,13 @@ def get_comp_chain(exp_id: str, data: InputData,
     return ts_chain
 
 
-def get_crm_prediction_with_intervals(well_name):
+def get_crm_prediction_with_intervals(well_name, pred_len: int):
     file_path_crm = f'./input_data/crmip.csv'
     file_path_crm = os.path.join(str(project_root()), file_path_crm)
 
     data_frame = pd.read_csv(file_path_crm, sep=',')
-    crm = data_frame[f'mean_{well_name}'][(300 - 1):700]
+    df_len = len(data_frame[f'mean_{well_name}'])
+    crm = data_frame[f'mean_{well_name}'][df_len - (pred_len):df_len]
     crm[np.isnan(crm)] = 0
     return crm
 
@@ -95,7 +95,7 @@ def calculate_validation_metric(pred: OutputData, pred_crm, pred_crm_opt, valid:
 
     real = valid.target[~np.isnan(pred.predict)]
 
-    crm = get_crm_prediction_with_intervals(name)
+    crm = get_crm_prediction_with_intervals(name, pred_len=len(real))
 
     # the quality assessment for the simulation results
     rmse_ml = mse(y_true=real, y_pred=predicted, squared=False)
@@ -119,12 +119,12 @@ def calculate_validation_metric(pred: OutputData, pred_crm, pred_crm_opt, valid:
             dtw_crm, dtw_ml, dtw_ml_crm, dtw_crm_opt)
 
 
-def get_crm_intervals(model_name):
+def get_crm_intervals(model_name, pred_len: int):
     file_path_crm = f'./input_data/crmip.csv'
     file_path_crm = os.path.join(str(project_root()), file_path_crm)
 
     data_frame = pd.read_csv(file_path_crm, sep=',')
-    validation_range_start, validation_range_end = 300, 700
+    validation_range_start, validation_range_end = data_frame.shape[0] - pred_len, data_frame.shape[0]
     mean = data_frame[f'mean_{model_name}'][validation_range_start:validation_range_end]
     min_int = data_frame[f'min_{model_name}'][validation_range_start:validation_range_end]
     max_int = data_frame[f'max_{model_name}'][validation_range_start:validation_range_end]
@@ -135,7 +135,7 @@ def get_crm_intervals(model_name):
 
 
 def compare_plot(predicted, predicted_crm, predicted_crm_opt, real, forecast_length, model_name, err):
-    min_int, mean, max_int, times = get_crm_intervals(model_name)
+    min_int, mean, max_int, times = get_crm_intervals(model_name, len(real))
 
     plt.clf()
     _, ax = plt.subplots()

@@ -93,6 +93,8 @@ def calculate_validation_metric(pred: OutputData, pred_crm, pred_crm_opt, valid:
     predicted_crm = pred_crm.predict[~np.isnan(pred.predict)]
     predicted_crm_opt = pred_crm_opt.predict[~np.isnan(pred.predict)]
 
+    np.savetxt('ML', predicted)
+
     real = valid.target[~np.isnan(pred.predict)]
 
     crm = get_crm_prediction_with_intervals(name, pred_len=len(real))
@@ -148,9 +150,9 @@ def compare_plot(predicted, predicted_crm, predicted_crm_opt, real, forecast_len
     plt.plot(predicted_crm_opt, linewidth=1, label="Evo ML+CRM", alpha=0.8)
 
     ax.legend()
-    plt.xlabel('Time, h')
+    plt.xlabel('Time, days')
     plt.ylabel('Oil volume')
-    plt.title(f'Oil production for {forecast_length} hours in {model_name}, RMSE={round(err)} m3')
+    plt.title(f'Oil production {model_name}')
     plt.savefig(f'{model_name}.png')
 
 

@@ -12,9 +12,9 @@ from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
 
 from toolbox.forecasting_utils import calculate_validation_metric, get_comp_chain, merge_datasets
 
-forecast_window_shift_num = 4
+forecast_window_shift_num = 1
 
-depth = 50
+depth = 100
 
 
 def project_root() -> Path:
